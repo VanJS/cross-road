@@ -1,0 +1,103 @@
+{
+	"textures": [
+		{
+			"image": "duck_walk",
+			"format": "RGBA8888",
+			"size": {
+				"w": 72,
+				"h": 37
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "duckee_walk_run3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 19,
+						"y": 30,
+						"w": 25,
+						"h": 18
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 25,
+						"h": 18
+					}
+				},
+				{
+					"filename": "duckee_walk_run2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 29,
+						"w": 24,
+						"h": 19
+					},
+					"frame": {
+						"x": 25,
+						"y": 0,
+						"w": 24,
+						"h": 19
+					}
+				},
+				{
+					"filename": "duckee_walk_run4.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 29,
+						"w": 24,
+						"h": 19
+					},
+					"frame": {
+						"x": 0,
+						"y": 18,
+						"w": 24,
+						"h": 19
+					}
+				},
+				{
+					"filename": "duckee_walk_run1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 30,
+						"w": 23,
+						"h": 18
+					},
+					"frame": {
+						"x": 49,
+						"y": 0,
+						"w": 23,
+						"h": 18
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "http://free-tex-packer.com",
+		"version": "0.6.7"
+	}
+}
