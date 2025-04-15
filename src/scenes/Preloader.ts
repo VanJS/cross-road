@@ -76,7 +76,7 @@ export default class Preloader extends Phaser.Scene {
 		// Load background and other game assets
 		this.load.image('background', 'assets/skies/sky_day.jpg');
 		// this.load.image('platform', 'assets/platform.png'); // Example platform asset
-		// this.load.image('logo', 'assets/logo.png');
+		this.load.image('logo', 'assets/logo.png');
 
 		// Load any additional game assets here
 	}
