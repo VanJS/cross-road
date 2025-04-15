@@ -1,46 +1,90 @@
-import { Scene } from 'phaser';
+import Phaser from 'phaser';
 
-export class Preloader extends Scene
-{
-    constructor ()
-    {
-        super('Preloader');
-    }
+export default class Preloader extends Phaser.Scene {
+	constructor() {
+		super('Preloader');
+	}
 
-    init ()
-    {
-        //  We loaded this image in our Boot Scene, so we can display it here
-        this.add.image(512, 384, 'background');
+	preload(): void {
+		// Create a loading bar
+		const width = this.cameras.main.width;
+		const height = this.cameras.main.height;
 
-        //  A simple progress bar. This is the outline of the bar.
-        this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
+		const progressBar = this.add.graphics();
+		const progressBox = this.add.graphics();
+		progressBox.fillStyle(0x222222, 0.8);
+		progressBox.fillRect(width / 4, height / 2 - 30, width / 2, 50);
 
-        //  This is the progress bar itself. It will increase in size from the left based on the % of progress.
-        const bar = this.add.rectangle(512-230, 384, 4, 28, 0xffffff);
+		// Loading text
+		const loadingText = this.add
+			.text(width / 2, height / 2 - 50, 'Loading...', {
+				font: '20px monospace',
+				color: '#ffffff',
+			})
+			.setOrigin(0.5, 0.5);
 
-        //  Use the 'progress' event emitted by the LoaderPlugin to update the loading bar
-        this.load.on('progress', (progress: number) => {
+		// Progress percentage text
+		const percentText = this.add
+			.text(width / 2, height / 2 + 70, '0%', {
+				font: '18px monospace',
+				color: '#ffffff',
+			})
+			.setOrigin(0.5, 0.5);
 
-            //  Update the progress bar (our bar is 464px wide, so 100% = 464px)
-            bar.width = 4 + (460 * progress);
+		// Listen for loading progress
+		this.load.on('progress', (value: number) => {
+			progressBar.clear();
+			progressBar.fillStyle(0xffffff, 1);
+			progressBar.fillRect(
+				width / 4 + 10,
+				height / 2 - 20,
+				(width / 2 - 20) * value,
+				30
+			);
+			percentText.setText(`${parseInt(String(value * 100))}%`);
+		});
 
-        });
-    }
+		this.load.on('complete', () => {
+			progressBar.destroy();
+			progressBox.destroy();
+			loadingText.destroy();
+			percentText.destroy();
+		});
 
-    preload ()
-    {
-        //  Load the assets for the game - Replace with your own assets
-        this.load.setPath('assets');
+		// Load duck animation atlases individually
+		// Idle animation
+		this.load.atlas(
+			'duck_idle',
+			'assets/duck/idle/duck_idle.png',
+			'assets/duck/idle/duck_idle.json'
+		);
 
-        this.load.image('logo', 'logo.png');
-    }
+		// Walk animation
+		this.load.atlas(
+			'duck_walk',
+			'assets/duck/walk/duck_walk.png',
+			'assets/duck/walk/duck_walk.json'
+		);
 
-    create ()
-    {
-        //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
-        //  For example, you can define global animations here, so we can use them in other scenes.
+		// Jump animation
+		this.load.atlas(
+			'duck_jump',
+			'assets/duck/jump/duck_jump.png',
+			'assets/duck/jump/duck_jump.json'
+		);
 
-        //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-        this.scene.start('MainMenu');
-    }
+		// Load background and other game assets
+		this.load.image('background', 'assets/skies/sky_day.jpg');
+		// this.load.image('platform', 'assets/platform.png'); // Example platform asset
+		// this.load.image('logo', 'assets/logo.png');
+
+		// Load any additional game assets here
+	}
+
+	create(): void {
+		// Animation setup if needed
+
+		// Once loading is complete, transition to the MainMenu scene
+		this.scene.start('MainMenu');
+	}
 }
