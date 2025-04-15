@@ -1,0 +1,145 @@
+{
+	"textures": [
+		{
+			"image": "duck_jump",
+			"format": "RGBA8888",
+			"size": {
+				"w": 87,
+				"h": 49
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "duckee_jump5.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 40,
+						"w": 36,
+						"h": 8
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 36,
+						"h": 8
+					}
+				},
+				{
+					"filename": "duckee_jump6.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 17,
+						"y": 30,
+						"w": 26,
+						"h": 18
+					},
+					"frame": {
+						"x": 36,
+						"y": 0,
+						"w": 26,
+						"h": 18
+					}
+				},
+				{
+					"filename": "duckee_jump4.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 20,
+						"y": 22,
+						"w": 25,
+						"h": 21
+					},
+					"frame": {
+						"x": 0,
+						"y": 8,
+						"w": 25,
+						"h": 21
+					}
+				},
+				{
+					"filename": "duckee_jump2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 19,
+						"y": 29,
+						"w": 25,
+						"h": 19
+					},
+					"frame": {
+						"x": 62,
+						"y": 0,
+						"w": 25,
+						"h": 19
+					}
+				},
+				{
+					"filename": "duckee_jump3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 21,
+						"y": 24,
+						"w": 23,
+						"h": 23
+					},
+					"frame": {
+						"x": 25,
+						"y": 18,
+						"w": 23,
+						"h": 23
+					}
+				},
+				{
+					"filename": "duckee_jump1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 19,
+						"y": 28,
+						"w": 23,
+						"h": 20
+					},
+					"frame": {
+						"x": 0,
+						"y": 29,
+						"w": 23,
+						"h": 20
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "http://free-tex-packer.com",
+		"version": "0.6.7"
+	}
+}
