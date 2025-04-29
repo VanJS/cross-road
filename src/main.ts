@@ -16,6 +16,17 @@ const config: Types.Core.GameConfig = {
 	scale: {
 		mode: Phaser.Scale.FIT,
 		autoCenter: Phaser.Scale.CENTER_BOTH,
+		width: 1024,
+		height: 768,
+		min: {
+			width: 320,
+			height: 240,
+		},
+		max: {
+			width: 1600,
+			height: 1200,
+		},
+		autoRound: true,
 	},
 	physics: {
 		default: 'arcade',
@@ -26,8 +37,19 @@ const config: Types.Core.GameConfig = {
 	},
 	input: {
 		keyboard: true,
+		touch: true, // Enable touch controls for mobile
+		gamepad: true, // Enable gamepad support
 	},
 	scene: [Boot, Preloader, MainMenu, Game, GameOver],
 };
 
-export default new PhaserGame(config);
+// Add resize listener to handle window size changes
+window.addEventListener('resize', () => {
+	if (game) {
+		// This forces the game to recalculate its size
+		game.scale.refresh();
+	}
+});
+
+const game = new PhaserGame(config);
+export default game;

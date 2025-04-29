@@ -2,160 +2,227 @@ import Phaser from 'phaser';
 
 export default class Duck extends Phaser.Physics.Arcade.Sprite {
 	private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
-	private jumpKey: Phaser.Input.Keyboard.Key;
-	private isJumping: boolean = false;
+	private gamepad: Phaser.Input.Gamepad.Gamepad | null = null;
 	private direction: 'left' | 'right' = 'right';
+	private moveSpeed: number = 150;
+	private animationTypes = ['duck_idle', 'duck_walk'];
 
 	constructor(scene: Phaser.Scene, x: number, y: number) {
 		// Initialize with the idle animation texture
 		super(scene, x, y, 'duck_idle');
-
 		// Add sprite to the scene
 		scene.add.existing(this);
-
 		// Enable physics
 		scene.physics.add.existing(this);
-
 		// Set physics properties
 		this.setCollideWorldBounds(true);
-
 		// Create animations
 		this.createAnimations();
-
 		// Setup input
 		this.cursors =
 			scene.input.keyboard?.createCursorKeys() ||
 			({} as Phaser.Types.Input.Keyboard.CursorKeys);
-		this.jumpKey =
-			scene.input.keyboard?.addKey(
-				Phaser.Input.Keyboard.KeyCodes.SPACE
-			) || ({} as Phaser.Input.Keyboard.Key);
-
 		// Start with idle animation
 		this.play('duck_idle');
 	}
 
 	private createAnimations(): void {
-		// Create idle animation
-		if (!this.scene.anims.exists('duck_idle')) {
-			this.scene.anims.create({
-				key: 'duck_idle',
-				frames: this.scene.anims.generateFrameNames('duck_idle', {
-					prefix: 'duckee_idle',
-					start: 1,
-					end: 4,
-					suffix: '.png',
-				}),
-				frameRate: 8,
-				repeat: -1,
-			});
-		}
+		// Create all animations using switch case
+		for (const animType of this.animationTypes) {
+			// Skip if animation already exists
+			if (this.scene.anims.exists(animType)) continue;
 
-		// Create walk animation
-		if (!this.scene.anims.exists('duck_walk')) {
-			this.scene.anims.create({
-				key: 'duck_walk',
-				frames: this.scene.anims.generateFrameNames('duck_walk', {
-					prefix: 'duckee_walk_run',
-					start: 1,
-					end: 4,
-					suffix: '.png',
-				}),
-				frameRate: 10,
-				repeat: -1,
-			});
-		}
+			// Define animation parameters based on type
+			switch (animType) {
+				case 'duck_idle':
+					this.scene.anims.create({
+						key: 'duck_idle',
+						frames: this.scene.anims.generateFrameNames(
+							'duck_idle',
+							{
+								prefix: 'duckee_idle',
+								start: 1,
+								end: 4,
+								suffix: '.png',
+							}
+						),
+						frameRate: 8,
+						repeat: -1,
+					});
+					break;
 
-		// Create jump animation
-		if (!this.scene.anims.exists('duck_jump')) {
-			this.scene.anims.create({
-				key: 'duck_jump',
-				frames: this.scene.anims.generateFrameNames('duck_jump', {
-					prefix: 'duckee_jump',
-					start: 1,
-					end: 6,
-					suffix: '.png',
-				}),
-				frameRate: 12,
-				repeat: 0,
-			});
+				case 'duck_walk':
+					this.scene.anims.create({
+						key: 'duck_walk',
+						frames: this.scene.anims.generateFrameNames(
+							'duck_walk',
+							{
+								prefix: 'duckee_walk_run',
+								start: 1,
+								end: 4,
+								suffix: '.png',
+							}
+						),
+						frameRate: 10,
+						repeat: -1,
+					});
+					break;
 
-			// Listen for animation complete event
-			this.on('animationcomplete-duck_jump', () => {
-				this.isJumping = false;
-				this.play('duck_idle');
-			});
+				// Add more animation cases here if needed
+			}
 		}
 	}
 
 	update(): void {
-		if (this.isJumping) {
-			// Skip input handling while jumping
-			return;
-		}
+		// Handle gamepad connection
+		this.handleGamepadConnection();
 
-		// Handle horizontal movement
-		if (this.cursors.left?.isDown) {
-			this.direction = 'left';
-			this.setFlipX(true);
-			this.setVelocityX(-150);
+		// Get movement input
+		const movementState = this.getMovementState();
 
-			if (!this.isJumping) {
+		// Reset velocity
+		this.setVelocity(0, 0);
+
+		// Handle movement based on movement state
+		switch (movementState) {
+			case 'left':
+				this.direction = 'left';
+				this.setFlipX(true);
+				this.setVelocityX(-this.moveSpeed);
 				this.play('duck_walk', true);
-			}
-		} else if (this.cursors.right?.isDown) {
-			this.direction = 'right';
-			this.setFlipX(false);
-			this.setVelocityX(150);
+				break;
 
-			if (!this.isJumping) {
+			case 'right':
+				this.direction = 'right';
+				this.setFlipX(false);
+				this.setVelocityX(this.moveSpeed);
 				this.play('duck_walk', true);
-			}
-		} else {
-			this.setVelocityX(0);
+				break;
 
-			if (!this.isJumping) {
+			case 'up':
+				this.setVelocityY(-this.moveSpeed);
+				this.play('duck_walk', true);
+				break;
+
+			case 'down':
+				this.setVelocityY(this.moveSpeed);
+				this.play('duck_walk', true);
+				break;
+
+			case 'upLeft':
+				this.direction = 'left';
+				this.setFlipX(true);
+				this.setVelocity(
+					-this.moveSpeed / Math.sqrt(2),
+					-this.moveSpeed / Math.sqrt(2)
+				);
+				this.play('duck_walk', true);
+				break;
+
+			case 'upRight':
+				this.direction = 'right';
+				this.setFlipX(false);
+				this.setVelocity(
+					this.moveSpeed / Math.sqrt(2),
+					-this.moveSpeed / Math.sqrt(2)
+				);
+				this.play('duck_walk', true);
+				break;
+
+			case 'downLeft':
+				this.direction = 'left';
+				this.setFlipX(true);
+				this.setVelocity(
+					-this.moveSpeed / Math.sqrt(2),
+					this.moveSpeed / Math.sqrt(2)
+				);
+				this.play('duck_walk', true);
+				break;
+
+			case 'downRight':
+				this.direction = 'right';
+				this.setFlipX(false);
+				this.setVelocity(
+					this.moveSpeed / Math.sqrt(2),
+					this.moveSpeed / Math.sqrt(2)
+				);
+				this.play('duck_walk', true);
+				break;
+
+			case 'idle':
+			default:
 				this.play('duck_idle', true);
-			}
-		}
-
-		// Handle jump input
-		if (this.jumpKey && Phaser.Input.Keyboard.JustDown(this.jumpKey)) {
-			this.jump();
+				break;
 		}
 	}
 
-	private jump(): void {
-		if (this.isJumping) return;
+	private handleGamepadConnection(): void {
+		// Find the first connected gamepad if available and not already set
+		if (!this.gamepad && this.scene.input.gamepad?.total) {
+			this.gamepad = this.scene.input.gamepad.getPad(0);
+		}
+	}
 
-		this.isJumping = true;
-		this.play('duck_jump');
+	private getMovementState(): string {
+		// Initialize movement values
+		let movingLeft = false;
+		let movingRight = false;
+		let movingUp = false;
+		let movingDown = false;
 
-		// Stop any horizontal movement during jump
-		this.setVelocityX(0);
+		// Handle keyboard input
+		if (this.cursors.left?.isDown) {
+			movingLeft = true;
+		}
+		if (this.cursors.right?.isDown) {
+			movingRight = true;
+		}
+		if (this.cursors.up?.isDown) {
+			movingUp = true;
+		}
+		if (this.cursors.down?.isDown) {
+			movingDown = true;
+		}
 
-		// Only vertical movement - jump straight up and down
-		this.scene.tweens.add({
-			targets: this,
-			y: this.y - 50, // Jump height
-			duration: 300,
-			ease: 'Power1',
-			yoyo: true, // Come back down
-			onComplete: () => {
-				// Extra safeguard in case animation complete doesn't fire
-				if (this.isJumping) {
-					this.isJumping = false;
-					this.play('duck_idle');
-				}
-			},
-		});
+		// Add gamepad controls if a gamepad is connected
+		if (this.gamepad) {
+			// Left stick or D-pad for movement
+			if (this.gamepad.leftStick.x < -0.5 || this.gamepad.left) {
+				movingLeft = true;
+			}
+			if (this.gamepad.leftStick.x > 0.5 || this.gamepad.right) {
+				movingRight = true;
+			}
+			if (this.gamepad.leftStick.y < -0.5 || this.gamepad.up) {
+				movingUp = true;
+			}
+			if (this.gamepad.leftStick.y > 0.5 || this.gamepad.down) {
+				movingDown = true;
+			}
+		}
+
+		// Prevent opposite directions from canceling each other
+		if (movingLeft && movingRight) {
+			movingLeft = movingRight = false;
+		}
+		if (movingUp && movingDown) {
+			movingUp = movingDown = false;
+		}
+
+		// Determine movement state
+		if (movingUp && movingLeft) return 'upLeft';
+		if (movingUp && movingRight) return 'upRight';
+		if (movingDown && movingLeft) return 'downLeft';
+		if (movingDown && movingRight) return 'downRight';
+		if (movingLeft) return 'left';
+		if (movingRight) return 'right';
+		if (movingUp) return 'up';
+		if (movingDown) return 'down';
+
+		return 'idle';
 	}
 
 	// Helper functions for external use
-	public isDuckJumping(): boolean {
-		return this.isJumping;
-	}
-
 	public getDuckDirection(): string {
 		return this.direction;
 	}
