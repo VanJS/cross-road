@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import Plane from '../objects/Plane';
 
 export default class Preloader extends Phaser.Scene {
 	constructor() {
@@ -51,6 +52,11 @@ export default class Preloader extends Phaser.Scene {
 			percentText.destroy();
 		});
 
+		// Add error handling
+		this.load.on('loaderror', (file: Phaser.Loader.File) => {
+			console.error('Error loading asset:', file.src);
+		});
+
 		// Load duck animation atlases individually
 		// Idle animation
 		this.load.atlas(
@@ -73,17 +79,18 @@ export default class Preloader extends Phaser.Scene {
 			'assets/duck/jump/duck_jump.json'
 		);
 
+		// Load plane assets
+		Plane.COLORS.forEach((color) => {
+			const key = `plane_${color}`;
+			this.load.image(key, `assets/plane_1/plane_1_${color}.png`);
+		});
+
 		// Load background and other game assets
 		this.load.image('background', 'assets/skies/sky_day.jpg');
-		// this.load.image('platform', 'assets/platform.png'); // Example platform asset
 		this.load.image('logo', 'assets/logo.png');
-
-		// Load any additional game assets here
 	}
 
 	create(): void {
-		// Animation setup if needed
-
 		// Once loading is complete, transition to the MainMenu scene
 		this.scene.start('MainMenu');
 	}
