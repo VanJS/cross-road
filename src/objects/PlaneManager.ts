@@ -17,7 +17,11 @@ export default class PlaneManager {
 	private duck: Duck;
 	private isPlayerInvincible: boolean = false;
 	private lanes: Lane[] = [];
-	private laneHeight: number = 64; // Height between each lane
+
+	// Fixed properties for game balance
+	private laneHeight: number = 64; // Base height between lanes
+	private laneSpacing: number = 2; // Spawn planes on every Nth row (higher = more sparse)
+	private baseSpeed: number = 300; // Base speed for planes (increased from 100)
 	private minDistanceBetweenPlanes: number = 200; // Minimum distance between planes in the same lane
 	private spawnChance: number = 0.3; // Chance to spawn a plane on each lane check
 
@@ -53,17 +57,21 @@ export default class PlaneManager {
 		});
 	}
 
-	// Setup lanes across the screen
+	// Setup lanes across the screen with fixed spacing
 	private setupLanes(): void {
 		const screenHeight = this.scene.cameras.main.height;
-		const numLanes = Math.floor(screenHeight / this.laneHeight);
+		const totalPossibleLanes = Math.floor(screenHeight / this.laneHeight);
 
-		for (let i = 0; i < numLanes; i++) {
+		// Only create lanes at every Nth position based on laneSpacing
+		for (let i = 0; i < totalPossibleLanes; i += this.laneSpacing) {
 			// Calculate y position for this lane
 			const y = i * this.laneHeight + this.laneHeight / 2;
 
-			// Create lane with random speed and direction
-			const speed = Phaser.Math.Between(50, 150);
+			// Create lane with speed variation
+			const speed = Phaser.Math.Between(
+				this.baseSpeed - 30,
+				this.baseSpeed + 30
+			);
 			const direction = Math.random() > 0.5 ? 1 : -1;
 
 			this.lanes.push({
@@ -74,12 +82,15 @@ export default class PlaneManager {
 				isActive: Math.random() > 0.3, // 70% of lanes are active at start
 			});
 		}
+
+		console.log(
+			`Created ${this.lanes.length} lanes with spacing of ${this.laneSpacing}`
+		);
 	}
 
 	// Check lanes for spawning new planes
 	private checkLanesForSpawning(): void {
 		const currentTime = this.scene.time.now;
-		const screenWidth = this.scene.cameras.main.width;
 
 		// Check each lane
 		this.lanes.forEach((lane) => {
@@ -127,9 +138,11 @@ export default class PlaneManager {
 
 	// Get all planes in a specific lane
 	private getPlanesInLane(lane: Lane): Plane[] {
-		return this.planes.getChildren().filter((plane) => {
-			const planeY = plane.y;
-			return Math.abs(planeY - lane.y) < 10; // 10 pixel tolerance
+		return this.planes.getChildren().filter((child) => {
+			// Safe cast to Plane since we know these are plane objects
+			const plane = child as Plane;
+			// Check if plane's y position is close to lane y position
+			return Math.abs(plane.y - lane.y) < 10; // 10 pixel tolerance
 		}) as Plane[];
 	}
 
@@ -155,14 +168,14 @@ export default class PlaneManager {
 		const plane = new Plane(this.scene, x, lane.y, color);
 		this.planes.add(plane);
 
-		// Start moving the plane
+		// Start moving the plane with lane's speed
 		plane.startMoving(lane.speed * lane.direction);
 	}
 
 	// Handle collision between duck and plane
 	private handlePlaneDuckCollision(
-		duckObj: Phaser.Types.Physics.Arcade.GameObjectWithBody,
-		planeObj: Phaser.Types.Physics.Arcade.GameObjectWithBody
+		duckObj: Phaser.Types.Physics.Arcade.GameObjectWithBody
+		// planeObj: Phaser.Types.Physics.Arcade.GameObjectWithBody
 	): void {
 		// Skip if player is already invincible
 		if (this.isPlayerInvincible) return;

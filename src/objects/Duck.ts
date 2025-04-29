@@ -6,6 +6,7 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 	private direction: 'left' | 'right' = 'right';
 	private moveSpeed: number = 150;
 	private animationTypes = ['duck_idle', 'duck_walk'];
+	private scaleSize: number = 1.5; // Scale factor for the duck size
 
 	constructor(scene: Phaser.Scene, x: number, y: number) {
 		// Initialize with the idle animation texture
@@ -16,6 +17,8 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 		scene.physics.add.existing(this);
 		// Set physics properties
 		this.setCollideWorldBounds(true);
+		// Make duck larger by setting scale (1.5 = 150% of original size)
+		this.setScale(this.scaleSize);
 		// Create animations
 		this.createAnimations();
 		// Setup input

@@ -1,11 +1,9 @@
 import Phaser from 'phaser';
 
 export default class Plane extends Phaser.Physics.Arcade.Sprite {
-	private planeColor: string;
-	private scaleSize: number = 0.08; // Scale factor for the plane size
-
 	// Available plane colors
 	static readonly COLORS = ['blue', 'pink', 'red', 'yellow'];
+	private scaleSize: number = 0.1; // Scale factor for the plane size
 
 	constructor(
 		scene: Phaser.Scene,
@@ -21,9 +19,6 @@ export default class Plane extends Phaser.Physics.Arcade.Sprite {
 
 		// Enable physics
 		scene.physics.add.existing(this);
-
-		// Store the plane color
-		this.planeColor = color;
 
 		// Make the plane smaller by setting scale
 		this.setScale(this.scaleSize);
