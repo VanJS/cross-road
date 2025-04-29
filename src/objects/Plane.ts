@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 
 export default class Plane extends Phaser.Physics.Arcade.Sprite {
 	private planeColor: string;
-	private scaleSize: number = 0.1; // Scale factor for the plane size
+	private scaleSize: number = 0.08; // Scale factor for the plane size
 
 	// Available plane colors
 	static readonly COLORS = ['blue', 'pink', 'red', 'yellow'];
@@ -36,21 +36,36 @@ export default class Plane extends Phaser.Physics.Arcade.Sprite {
 		this.setVisible(true);
 
 		// Adjust the hitbox size to match the visual size
-		this.body?.setSize(
-			this.width * this.scaleSize,
-			this.height * this.scaleSize
-		);
+		if (this.body) {
+			// Force a smaller hitbox for better collision detection
+			const hitboxWidth = this.width * this.scaleSize * 0.8;
+			const hitboxHeight = this.height * this.scaleSize * 0.6;
+			this.body.setSize(hitboxWidth, hitboxHeight);
+
+			// Center the hitbox
+			this.body.setOffset(
+				(this.width - hitboxWidth) / 2,
+				(this.height - hitboxHeight) / 2
+			);
+		}
 	}
 
 	// Method to manually start movement
 	startMoving(speed: number): void {
 		this.setVelocityX(speed);
+
+		// Flip sprite if moving left
+		if (speed < 0) {
+			this.setFlipX(true);
+		}
 	}
 
 	// Method to check if plane is out of bounds
 	update(): void {
-		// If the plane has moved off the right edge of the screen
-		if (this.x > this.scene.cameras.main.width + this.width) {
+		const screenWidth = this.scene.cameras.main.width;
+
+		// Check if plane is off screen based on direction
+		if (this.x > screenWidth + this.width || this.x < -this.width) {
 			this.destroy();
 		}
 	}
