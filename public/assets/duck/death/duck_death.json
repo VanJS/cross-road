@@ -1,0 +1,40 @@
+{
+	"textures": [
+		{
+			"image": "duck_death",
+			"format": "RGBA8888",
+			"size": {
+				"w": 27,
+				"h": 16
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "duckee_death-Sheet.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 17,
+						"y": 32,
+						"w": 27,
+						"h": 16
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 27,
+						"h": 16
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "http://free-tex-packer.com",
+		"version": "0.6.7"
+	}
+}
