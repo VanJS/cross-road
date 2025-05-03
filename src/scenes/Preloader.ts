@@ -85,6 +85,11 @@ export default class Preloader extends Phaser.Scene {
 			this.load.image(key, `assets/plane_1/plane_1_${color}.png`);
 		});
 
+		// Load static cloud assets
+		for (let i = 1; i <= 5; i++) {
+			this.load.image(`cloud${i}`, `assets/cloud/static/cloud_shape2_${i}.png`);
+		}
+
 		// Load background and other game assets
 		this.load.image('background', 'assets/skies/sky_day.jpg');
 		this.load.image('logo', 'assets/logo.png');
