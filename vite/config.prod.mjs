@@ -17,9 +17,10 @@ const phasermsg = () => {
 }   
 
 export default defineConfig({
-    base: './',
+    base: '/cross-road/',
     logLevel: 'warning',
     build: {
+        outDir: '../dist',
         rollupOptions: {
             output: {
                 manualChunks: {
