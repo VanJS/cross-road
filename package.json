@@ -18,22 +18,27 @@
         "build": "node log.js build & vite build --config vite/config.prod.mjs",
         "dev-nolog": "vite --config vite/config.dev.mjs",
         "build-nolog": "vite build --config vite/config.prod.mjs",
+        "format": "prettier --write .",
         "deploy": "npm run build && gh-pages -d dist",
         "lint": "eslint \"src/**/*.{ts,js}\" && prettier --check \"src/**/*.{ts,js}\"",
         "lint:fix": "eslint \"src/**/*.{ts,js}\" --fix && prettier --write \"src/**/*.{ts,js}\""
     },
     "devDependencies": {
-        "gh-pages": "^6.3.0",
-        "terser": "^5.31.0",
-        "typescript": "^5.4.5",
-        "vite": "^5.3.1",
-        "eslint": "^8.56.0",
         "@typescript-eslint/eslint-plugin": "^6.21.0",
         "@typescript-eslint/parser": "^6.21.0",
-        "husky": "^9.1.5"
+        "eslint": "^8.56.0",
+        "eslint-config-prettier": "^9.0.0",
+        "eslint-plugin-prettier": "^5.0.0",
+        "prettier": "^3.0.0",
+        "gh-pages": "^6.3.0",
+        "husky": "^9.1.5",
+        "terser": "^5.31.0",
+        "typescript": "~5.3.3",
+        "vite": "^5.3.1"
     },
     "dependencies": {
-        "phaser": "^3.88.2"
+        "phaser": "^3.88.2",
+        "prettier": "^3.5.3"
     },
     "lint-staged": {
         "*.{ts,tsx}": [
