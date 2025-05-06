@@ -8,6 +8,12 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 	private animationTypes = ['duck_idle', 'duck_walk'];
 	private scaleSize: number = 1.5; // Scale factor for the duck size
 
+	// Sound properties
+	private walkSound: Phaser.Sound.BaseSound;
+	private stepTimer: Phaser.Time.TimerEvent | null = null;
+	private stepInterval: number = 300; // Milliseconds between steps (adjust this value to change interval length)
+	private canPlayStepSound: boolean = true;
+
 	constructor(scene: Phaser.Scene, x: number, y: number) {
 		// Initialize with the idle animation texture
 		super(scene, x, y, 'duck_idle');
@@ -19,6 +25,14 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 		this.setCollideWorldBounds(true);
 		// Make duck larger by setting scale (1.5 = 150% of original size)
 		this.setScale(this.scaleSize);
+
+		// Set up walk sound (no loop because we'll control playing manually)
+		this.walkSound = scene.sound.add('walk', {
+			volume: 0.4,
+			loop: false,
+			rate: 1.2, // Slightly faster playback
+		});
+
 		// Create animations
 		this.createAnimations();
 		// Setup input
@@ -34,7 +48,6 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 		for (const animType of this.animationTypes) {
 			// Skip if animation already exists
 			if (this.scene.anims.exists(animType)) continue;
-
 			// Define animation parameters based on type
 			switch (animType) {
 				case 'duck_idle':
@@ -53,7 +66,6 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 						repeat: -1,
 					});
 					break;
-
 				case 'duck_walk':
 					this.scene.anims.create({
 						key: 'duck_walk',
@@ -70,7 +82,6 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 						repeat: -1,
 					});
 					break;
-
 				// Add more animation cases here if needed
 			}
 		}
@@ -79,12 +90,13 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 	update(): void {
 		// Handle gamepad connection
 		this.handleGamepadConnection();
-
 		// Get movement input
 		const movementState = this.getMovementState();
-
 		// Reset velocity
 		this.setVelocity(0, 0);
+
+		// Track if duck is moving this frame
+		let isMovingThisFrame = false;
 
 		// Handle movement based on movement state
 		switch (movementState) {
@@ -93,25 +105,25 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 				this.setFlipX(true);
 				this.setVelocityX(-this.moveSpeed);
 				this.play('duck_walk', true);
+				isMovingThisFrame = true;
 				break;
-
 			case 'right':
 				this.direction = 'right';
 				this.setFlipX(false);
 				this.setVelocityX(this.moveSpeed);
 				this.play('duck_walk', true);
+				isMovingThisFrame = true;
 				break;
-
 			case 'up':
 				this.setVelocityY(-this.moveSpeed);
 				this.play('duck_walk', true);
+				isMovingThisFrame = true;
 				break;
-
 			case 'down':
 				this.setVelocityY(this.moveSpeed);
 				this.play('duck_walk', true);
+				isMovingThisFrame = true;
 				break;
-
 			case 'upLeft':
 				this.direction = 'left';
 				this.setFlipX(true);
@@ -120,8 +132,8 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 					-this.moveSpeed / Math.sqrt(2)
 				);
 				this.play('duck_walk', true);
+				isMovingThisFrame = true;
 				break;
-
 			case 'upRight':
 				this.direction = 'right';
 				this.setFlipX(false);
@@ -130,8 +142,8 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 					-this.moveSpeed / Math.sqrt(2)
 				);
 				this.play('duck_walk', true);
+				isMovingThisFrame = true;
 				break;
-
 			case 'downLeft':
 				this.direction = 'left';
 				this.setFlipX(true);
@@ -140,8 +152,8 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 					this.moveSpeed / Math.sqrt(2)
 				);
 				this.play('duck_walk', true);
+				isMovingThisFrame = true;
 				break;
-
 			case 'downRight':
 				this.direction = 'right';
 				this.setFlipX(false);
@@ -150,12 +162,43 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 					this.moveSpeed / Math.sqrt(2)
 				);
 				this.play('duck_walk', true);
+				isMovingThisFrame = true;
 				break;
-
 			case 'idle':
 			default:
 				this.play('duck_idle', true);
+				isMovingThisFrame = false;
 				break;
+		}
+
+		// Manage walk sound based on movement
+		this.updateWalkSound(isMovingThisFrame);
+	}
+
+	// Manage walk sound playback with intervals
+	private updateWalkSound(isMoving: boolean): void {
+		// If the duck is moving and we can play a step sound
+		if (isMoving && this.canPlayStepSound) {
+			// Play the step sound
+			this.walkSound.play();
+
+			// Set flag to prevent sound playing again immediately
+			this.canPlayStepSound = false;
+
+			// Create a timer to allow the next step sound after the interval
+			this.stepTimer = this.scene.time.addEvent({
+				delay: this.stepInterval,
+				callback: () => {
+					this.canPlayStepSound = true;
+				},
+				callbackScope: this,
+			});
+		}
+		// If duck stops moving, clear the step timer
+		else if (!isMoving && this.stepTimer) {
+			this.stepTimer.destroy();
+			this.stepTimer = null;
+			this.canPlayStepSound = true;
 		}
 	}
 
@@ -172,7 +215,6 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 		let movingRight = false;
 		let movingUp = false;
 		let movingDown = false;
-
 		// Handle keyboard input
 		if (this.cursors.left?.isDown) {
 			movingLeft = true;
@@ -186,7 +228,6 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 		if (this.cursors.down?.isDown) {
 			movingDown = true;
 		}
-
 		// Add gamepad controls if a gamepad is connected
 		if (this.gamepad) {
 			// Left stick or D-pad for movement
@@ -203,7 +244,6 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 				movingDown = true;
 			}
 		}
-
 		// Prevent opposite directions from canceling each other
 		if (movingLeft && movingRight) {
 			movingLeft = movingRight = false;
@@ -211,7 +251,6 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 		if (movingUp && movingDown) {
 			movingUp = movingDown = false;
 		}
-
 		// Determine movement state
 		if (movingUp && movingLeft) return 'upLeft';
 		if (movingUp && movingRight) return 'upRight';
@@ -221,8 +260,30 @@ export default class Duck extends Phaser.Physics.Arcade.Sprite {
 		if (movingRight) return 'right';
 		if (movingUp) return 'up';
 		if (movingDown) return 'down';
-
 		return 'idle';
+	}
+
+	// Stop all sounds (for cleanup)
+	public stopSounds(): void {
+		if (this.walkSound) {
+			this.walkSound.stop();
+		}
+
+		if (this.stepTimer) {
+			this.stepTimer.destroy();
+			this.stepTimer = null;
+		}
+
+		this.canPlayStepSound = true;
+	}
+
+	// Handle scene shutdown/cleanup
+	public destroy(fromScene?: boolean): void {
+		// Stop sounds before destroying
+		this.stopSounds();
+
+		// Call parent destroy method
+		super.destroy(fromScene);
 	}
 
 	// Helper functions for external use

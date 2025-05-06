@@ -17,6 +17,7 @@ export default class PlaneManager {
 	private duck: Duck;
 	private isPlayerInvincible: boolean = false;
 	private lanes: Lane[] = [];
+	private hitSound: Phaser.Sound.BaseSound;
 
 	// Fixed properties for game balance
 	private laneHeight: number = 64; // Base height between lanes
@@ -33,6 +34,12 @@ export default class PlaneManager {
 		this.planes = scene.physics.add.group({
 			classType: Plane,
 			runChildUpdate: true, // Automatically run update on all planes
+		});
+
+		// Load hit sound effect
+		this.hitSound = scene.sound.add('hit_plane', {
+			volume: 1.2,
+			loop: false,
 		});
 
 		// Set up collision with duck
@@ -183,6 +190,9 @@ export default class PlaneManager {
 		// Make player invincible
 		this.isPlayerInvincible = true;
 
+		// Play hit sound
+		this.hitSound.play();
+
 		// Get the duck sprite
 		const duck = duckObj as Duck;
 
@@ -209,6 +219,11 @@ export default class PlaneManager {
 	destroy(): void {
 		if (this.spawnTimer) {
 			this.spawnTimer.destroy();
+		}
+
+		// Stop any sounds
+		if (this.hitSound && this.hitSound.isPlaying) {
+			this.hitSound.stop();
 		}
 
 		this.planes.clear(true, true); // Destroy all planes
