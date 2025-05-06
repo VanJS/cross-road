@@ -25,9 +25,13 @@ export default class PlaneManager {
 	private minDistanceBetweenPlanes: number = 200; // Minimum distance between planes in the same lane
 	private spawnChance: number = 0.3; // Chance to spawn a plane on each lane check
 
-	constructor(scene: Phaser.Scene, duck: Duck) {
+	// Avoid spawning planes on the same lane as the cloud
+	private cloudXs: number[] = []; // X positions of clouds
+
+	constructor(scene: Phaser.Scene, duck: Duck, cloudXs: number[]) {
 		this.scene = scene;
 		this.duck = duck;
+		this.cloudXs = [];
 
 		// Create a physics group for planes
 		this.planes = scene.physics.add.group({
@@ -45,7 +49,7 @@ export default class PlaneManager {
 			this
 		);
 
-		// Setup lanes
+		// Setup lanesv                                                                                                
 		this.setupLanes();
 
 		// Set up recurring spawn timer - check lanes every 1.5 seconds
@@ -148,22 +152,27 @@ export default class PlaneManager {
 
 	// Spawn a plane in a specific lane
 	private spawnPlaneInLane(lane: Lane): void {
+		// Skip this lane if it's too close to any cloud
+		const safeRadius = 80;
+
+		const cloudConflict = (this.scene as any).clouds?.some((cloud: any) => {
+			return Math.abs(cloud.y - lane.y) < safeRadius;
+		});
+
+		if (cloudConflict) {
+			// Don't spawn a plane in this lane
+			console.log(`Skipping lane at y=${lane.y} due to nearby cloud`);
+			return;
+		}
+
 		// Get random plane color
 		const colorIndex = Phaser.Math.Between(0, Plane.COLORS.length - 1);
 		const color = Plane.COLORS[colorIndex];
 
 		// Position based on direction
 		const screenWidth = this.scene.cameras.main.width;
-		let x;
-
-		if (lane.direction > 0) {
-			// Moving right, spawn at left
-			x = -50;
-		} else {
-			// Moving left, spawn at right
-			x = screenWidth + 50;
-		}
-
+		const x = lane.direction > 0 ? -50 : screenWidth + 50;
+		
 		// Create the plane
 		const plane = new Plane(this.scene, x, lane.y, color);
 		this.planes.add(plane);

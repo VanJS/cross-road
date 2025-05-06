@@ -3,11 +3,13 @@ import Duck from '../objects/Duck';
 import Plane from '../objects/Plane';
 import PlaneManager from '../objects/PlaneManager';
 import Cloud from '../objects/Cloud';
+import CameraController from '../utils/CameraController';
 
 export default class Game extends Phaser.Scene {
 	private duck!: Duck;
 	private planeManager!: PlaneManager;
 	private clouds!: Cloud[];
+	private cameraController!: CameraController;
 
 	constructor() {
 		super('Game');
@@ -41,11 +43,14 @@ export default class Game extends Phaser.Scene {
 			console.error('Error creating duck:', error);
 		}
 
+		// initialize tracking of highest point
+		this.maxDuckY = this.duck.y;
+		
 		// Create clouds
 		this.clouds = [];
 
-		for (let i = 0; i < 5; i++) {
-			const randomIndex = Phaser.Math.Between(1, 5);
+		for (let i = 0; i < 3; i++) {
+			const randomIndex = Phaser.Math.Between(1, 3);
 			let x: number;
 			let y: number;
 
@@ -62,13 +67,12 @@ export default class Game extends Phaser.Scene {
 			this.clouds.push(cloud);
 		}
 
-		// Setup camera to follow the duck
-		this.cameras.main.startFollow(this.duck, true, 0.08, 0.08);
-
 		// Set up plane manager with planes
-		this.planeManager = new PlaneManager(this, this.duck);
+		this.planeManager = new PlaneManager(this, this.duck, this.clouds.map(c => c.x));
 
 		console.log('Plane manager created');
+
+		this.cameraController = new CameraController(this.cameras.main,1.5);
 	}
 
 	update(): void {
@@ -81,8 +85,15 @@ export default class Game extends Phaser.Scene {
 		// Update plane manager
 		this.planeManager.update();
 
-		// Example: Check if duck has fallen off the screen
-		if (this.duck.y > this.cameras.main.height) {
+		// Update camera controller
+		this.cameraController.update();
+
+		// Game over if duck goes off screen (top or bottom)
+		const camBottom = this.cameras.main.scrollY + this.cameras.main.height;
+		const camTop = this.cameras.main.scrollY;
+
+		if (this.duck.y > camBottom || this.duck.y < camTop) {
+			this.scene.stop();
 			this.scene.start('GameOver');
 		}
 	}
