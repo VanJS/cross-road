@@ -60,7 +60,6 @@ class CrossRoadScene extends Phaser.Scene {
 
   // Method to handle player's death
   playerDie() {
-    console.log('Player has died!');
     // Reset the player position or do any other game-over logic
     this.player.setPosition(64 * 5, 0); // Reset player position
     this.cameras.main.scrollY = 0; // Reset camera position to start
