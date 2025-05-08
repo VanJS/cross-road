@@ -244,7 +244,7 @@ export default class PlaneManager {
 		}
 
 		// Stop any sounds
-		if (this.hitSound && this.hitSound.isPlaying) {
+		if (this.hitSound?.isPlaying) {
 			this.hitSound.stop();
 		}
 
