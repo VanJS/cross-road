@@ -17,6 +17,7 @@ export default class PlaneManager {
 	private duck: Duck;
 	private isPlayerInvincible: boolean = false;
 	private lanes: Lane[] = [];
+	private hitSound: Phaser.Sound.BaseSound;
 
 	// Fixed properties for game balance
 	private laneHeight: number = 64; // Base height between lanes
@@ -33,6 +34,12 @@ export default class PlaneManager {
 		this.planes = scene.physics.add.group({
 			classType: Plane,
 			runChildUpdate: true, // Automatically run update on all planes
+		});
+
+		// Load hit sound effect
+		this.hitSound = scene.sound.add('hit_plane', {
+			volume: 0.7,
+			loop: false,
 		});
 
 		// Set up collision with duck
@@ -72,8 +79,12 @@ export default class PlaneManager {
 				this.baseSpeed - 30,
 				this.baseSpeed + 30
 			);
+
+			// IMPORTANT: Truly random direction
+			// This should be 50/50 chance of left or right
 			const direction = Math.random() > 0.5 ? 1 : -1;
 
+			// Create a lane with the random direction
 			this.lanes.push({
 				y,
 				speed,
@@ -81,6 +92,13 @@ export default class PlaneManager {
 				direction,
 				isActive: Math.random() > 0.3, // 70% of lanes are active at start
 			});
+
+			// Debug log to check direction ratio
+			console.log(
+				`Created lane at Y=${y} with direction=${direction} (${
+					direction > 0 ? 'right' : 'left'
+				})`
+			);
 		}
 
 		console.log(
@@ -119,19 +137,23 @@ export default class PlaneManager {
 
 		// If planes move right, check left side
 		if (lane.direction > 0) {
-			const rightmostPlane = planesInLane.reduce((prev, current) => {
+			// FIXED: For right-moving planes, we need the leftmost plane, not rightmost
+			const leftmostPlane = planesInLane.reduce((prev, current) => {
 				return prev.x < current.x ? prev : current;
 			});
-			return rightmostPlane.x > this.minDistanceBetweenPlanes;
+			// Need enough space from left edge
+			return leftmostPlane.x > this.minDistanceBetweenPlanes;
 		}
 		// If planes move left, check right side
 		else {
-			const leftmostPlane = planesInLane.reduce((prev, current) => {
+			// FIXED: For left-moving planes, we need the rightmost plane, not leftmost
+			const rightmostPlane = planesInLane.reduce((prev, current) => {
 				return prev.x > current.x ? prev : current;
 			});
+			// Need enough space from right edge
 			const screenWidth = this.scene.cameras.main.width;
 			return (
-				screenWidth - leftmostPlane.x > this.minDistanceBetweenPlanes
+				screenWidth - rightmostPlane.x > this.minDistanceBetweenPlanes
 			);
 		}
 	}
@@ -170,6 +192,13 @@ export default class PlaneManager {
 
 		// Start moving the plane with lane's speed
 		plane.startMoving(lane.speed * lane.direction);
+
+		// Debug log to confirm plane movement direction
+		console.log(
+			`Spawned plane at Y=${lane.y} moving ${
+				lane.direction > 0 ? 'right' : 'left'
+			} with speed=${lane.speed * lane.direction}`
+		);
 	}
 
 	// Handle collision between duck and plane
@@ -182,6 +211,9 @@ export default class PlaneManager {
 
 		// Make player invincible
 		this.isPlayerInvincible = true;
+
+		// Play hit sound
+		this.hitSound.play();
 
 		// Get the duck sprite
 		const duck = duckObj as Duck;
@@ -209,6 +241,11 @@ export default class PlaneManager {
 	destroy(): void {
 		if (this.spawnTimer) {
 			this.spawnTimer.destroy();
+		}
+
+		// Stop any sounds
+		if (this.hitSound?.isPlaying) {
+			this.hitSound.stop();
 		}
 
 		this.planes.clear(true, true); // Destroy all planes

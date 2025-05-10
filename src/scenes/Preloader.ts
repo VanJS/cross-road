@@ -88,6 +88,13 @@ export default class Preloader extends Phaser.Scene {
 		// Load background and other game assets
 		this.load.image('background', 'assets/skies/sky_day.jpg');
 		this.load.image('logo', 'assets/logo.png');
+
+		// Load audio assets
+		this.load.audio('main-theme', 'assets/audio/bgm/main-theme.mp3');
+
+		// Load sound effects
+		this.load.audio('walk', 'assets/audio/sfx/walk.wav');
+		this.load.audio('hit_plane', 'assets/audio/sfx/hit_plane.mp3');
 	}
 
 	create(): void {
