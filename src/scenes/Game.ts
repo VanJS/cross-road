@@ -42,9 +42,6 @@ export default class Game extends Phaser.Scene {
 		} catch (error) {
 			console.error('Error creating duck:', error);
 		}
-
-		// initialize tracking of highest point
-		this.maxDuckY = this.duck.y;
 		
 		// Create clouds
 		this.clouds = [];
@@ -72,7 +69,7 @@ export default class Game extends Phaser.Scene {
 
 		console.log('Plane manager created');
 
-		this.cameraController = new CameraController(this.cameras.main,1.5);
+		this.cameraController = new CameraController(this.cameras.main,0.5);
 	}
 
 	update(): void {
