@@ -4,12 +4,15 @@ import Plane from '../objects/Plane';
 import PlaneManager from '../objects/PlaneManager';
 import Cloud from '../objects/Cloud';
 import CameraController from '../utils/CameraController';
+import ScoreManager from '../utils/ScoreManager';
 
 export default class Game extends Phaser.Scene {
 	private duck!: Duck;
 	private planeManager!: PlaneManager;
 	private clouds!: Cloud[];
 	private cameraController!: CameraController;
+	private scoreManager!: ScoreManager;
+
 
 	constructor() {
 		super('Game');
@@ -70,6 +73,9 @@ export default class Game extends Phaser.Scene {
 		console.log('Plane manager created');
 
 		this.cameraController = new CameraController(this.cameras.main,0.5);
+
+		// Set up score manager
+		this.scoreManager = new ScoreManager(this);
 	}
 
 	update(): void {
@@ -85,13 +91,19 @@ export default class Game extends Phaser.Scene {
 		// Update camera controller
 		this.cameraController.update();
 
+		// Update score based on distance traveled
+		const camTop = this.cameras.main.scrollY;
+		const distance = Math.abs(camTop - this.duck.y);
+		this.scoreManager.updateScoreByDistance(distance);
+
+
 		// Game over if duck goes off screen (top or bottom)
 		const camBottom = this.cameras.main.scrollY + this.cameras.main.height;
-		const camTop = this.cameras.main.scrollY;
-
+		const finalScore = this.scoreManager.getScore();
 		if (this.duck.y > camBottom || this.duck.y < camTop) {
 			this.scene.stop();
-			this.scene.start('GameOver');
+			this.scene.start('GameOver', { score: finalScore });
 		}
+
 	}
 }
