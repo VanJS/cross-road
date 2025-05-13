@@ -12,6 +12,7 @@ export default class Game extends Phaser.Scene {
 	private clouds!: Cloud[];
 	private cameraController!: CameraController;
 	private scoreManager!: ScoreManager;
+	private scoreText!: Phaser.GameObjects.Text;
 
 
 	constructor() {
@@ -75,7 +76,16 @@ export default class Game extends Phaser.Scene {
 		this.cameraController = new CameraController(this.cameras.main,0.5);
 
 		// Set up score manager
-		this.scoreManager = new ScoreManager(this);
+		this.scoreManager = new ScoreManager(this.duck.y);
+
+		// Create score text
+		this.scoreText = this.add.text(10, 10, 'Score: 0', {
+			fontSize: '24px',
+			color: '#ffffff',
+			stroke: '#000',
+			strokeThickness: 2,
+		}).setScrollFactor(0);
+
 	}
 
 	update(): void {
@@ -91,13 +101,15 @@ export default class Game extends Phaser.Scene {
 		// Update camera controller
 		this.cameraController.update();
 
-		// Update score based on distance traveled
-		const camTop = this.cameras.main.scrollY;
-		const distance = Math.abs(camTop - this.duck.y);
-		this.scoreManager.updateScoreByDistance(distance);
+		// Update score based on duck's Y
+		this.scoreManager.update(this.duck.y);
+
+		// Update score display
+		this.scoreText.setText(`Score: ${this.scoreManager.getScore()}`);
 
 
 		// Game over if duck goes off screen (top or bottom)
+		const camTop = this.cameras.main.scrollY;
 		const camBottom = this.cameras.main.scrollY + this.cameras.main.height;
 		const finalScore = this.scoreManager.getScore();
 		if (this.duck.y > camBottom || this.duck.y < camTop) {
