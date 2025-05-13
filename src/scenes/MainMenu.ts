@@ -18,14 +18,14 @@ export class MainMenu extends Scene {
 
 		// Try to use logo if available, otherwise use text
 		try {
-			this.logo = this.add.image(512, 300, 'logo');
+			this.logo = this.add.image(512, 350, 'logo').setScale(0.15);
 		} catch (error) {
 			// Create a title instead if logo isn't available
 			this.add
-				.text(512, 300, 'DUCK GAME', {
+				.text(512, 350, 'CROSSY DUCK', {
 					fontFamily: 'Arial Black',
 					fontSize: 48,
-					color: '#ffffff',
+					color: '#f9b400',
 					stroke: '#000000',
 					strokeThickness: 8,
 					align: 'center',
@@ -34,24 +34,12 @@ export class MainMenu extends Scene {
 		}
 
 		this.title = this.add
-			.text(512, 460, 'Main Menu', {
+			.text(512, 600, 'Click to start', {
 				fontFamily: 'Arial Black',
 				fontSize: 38,
 				color: '#ffffff',
 				stroke: '#000000',
 				strokeThickness: 8,
-				align: 'center',
-			})
-			.setOrigin(0.5);
-
-		// Add start game text
-		this.add
-			.text(512, 520, 'Click/Tap to Start', {
-				fontFamily: 'Arial',
-				fontSize: 24,
-				color: '#ffffff',
-				stroke: '#000000',
-				strokeThickness: 4,
 				align: 'center',
 			})
 			.setOrigin(0.5);
