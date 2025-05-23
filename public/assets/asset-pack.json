@@ -1,0 +1,71 @@
+{
+    "section1": {
+        "files": [
+            {
+                "url": "assets/animations.json",
+                "type": "animation",
+                "key": "animations"
+            },
+            {
+                "url": "assets/cloud/cloud_shape2_1.png",
+                "type": "image",
+                "key": "cloud_shape2_1"
+            },
+            {
+                "url": "assets/cloud/cloud_shape2_2.png",
+                "type": "image",
+                "key": "cloud_shape2_2"
+            },
+            {
+                "url": "assets/cloud/cloud_shape2_3.png",
+                "type": "image",
+                "key": "cloud_shape2_3"
+            },
+            {
+                "url": "assets/duck/duckee_sprite_sheet.png",
+                "frameConfig": {
+                    "frameWidth": 64,
+                    "frameHeight": 64,
+                    "startFrame": 0,
+                    "endFrame": -1,
+                    "spacing": 0,
+                    "margin": 0
+                },
+                "type": "spritesheet",
+                "key": "duckee_sprite_sheet"
+            },
+            {
+                "url": "assets/skies/Fading_Sky-Blue_04-512x512.png",
+                "type": "image",
+                "key": "Fading_Sky-Blue_04-512x512"
+            },
+            {
+                "url": [
+                    "assets/audio/bgm/main-theme.mp3"
+                ],
+                "type": "audio",
+                "key": "main-theme"
+            },
+            {
+                "url": "assets/skies/sky_day.jpg",
+                "type": "image",
+                "key": "sky_day"
+            },
+            {
+                "url": [
+                    "assets/audio/sfx/walk.wav"
+                ],
+                "type": "audio",
+                "key": "walk"
+            }
+        ]
+    },
+    "meta": {
+        "app": "Phaser Editor 2D - Asset Pack Editor",
+        "contentType": "phasereditor2d.pack.core.AssetContentType",
+        "url": "https://phasereditor2d.com",
+        "version": 2,
+        "showAllFilesInBlocks": false,
+        "visible": true
+    }
+}

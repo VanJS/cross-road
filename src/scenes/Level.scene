@@ -1,0 +1,86 @@
+{
+    "id": "b685c081-ee5f-4b67-b583-415922c9e2c4",
+    "sceneType": "SCENE",
+    "settings": {
+        "exportClass": true,
+        "autoImport": true,
+        "preloadPackFiles": [],
+        "createMethodName": "editorCreate",
+        "sceneKey": "Level",
+        "compilerOutputLanguage": "TYPE_SCRIPT",
+        "borderWidth": 1280,
+        "borderHeight": 720
+    },
+    "displayList": [
+        {
+            "prefabId": "7307d042-d17e-4d95-86e3-af0be34cff16",
+            "id": "eea7bda9-255d-44d2-89bd-f33b573f37f2",
+            "unlock": [
+                "x",
+                "y"
+            ],
+            "label": "backgroundPrefab",
+            "x": 0,
+            "y": 0
+        },
+        {
+            "prefabId": "a0257590-7500-48e9-87ef-6acafa900c79",
+            "id": "eb1bdcda-8b08-4fef-9cb3-59b69e13c654",
+            "label": "platformGroupPrefab",
+            "scope": "CLASS"
+        },
+        {
+            "type": "Layer",
+            "id": "3b48cedc-2dc7-48c1-bee9-357284ec5071",
+            "label": "playerLayer",
+            "list": [
+                {
+                    "prefabId": "60a7b19b-623b-4f1d-ac24-fc5a8505496b",
+                    "id": "f8c706bf-5d71-43d7-805c-41a657d9c060",
+                    "unlock": [
+                        "x",
+                        "y",
+                        "left",
+                        "right"
+                    ],
+                    "label": "player",
+                    "displayName": "Player",
+                    "scope": "CLASS",
+                    "x": 640,
+                    "y": 467,
+                    "left": false,
+                    "right": false
+                }
+            ]
+        }
+    ],
+    "plainObjects": [
+        {
+            "id": "f6762886-2591-4bd6-bac9-0471bff013c6",
+            "type": "Collider",
+            "label": "PlayerWithPlatformsCollider",
+            "scope": "LOCAL",
+            "object1": "player",
+            "object2": "platformGroupPrefab.group",
+            "collideCallback": "this.onPlayerLand"
+        },
+        {
+            "id": "0f4b6148-3b2d-4519-99c1-ae6596335bb7",
+            "type": "Keyboard.Key",
+            "label": "leftKeyboardKey",
+            "keyCode": "LEFT"
+        },
+        {
+            "id": "9b08a0dd-fcea-42c7-b748-e21baa34c061",
+            "type": "Keyboard.Key",
+            "label": "rightKeyboardKey",
+            "keyCode": "RIGHT"
+        }
+    ],
+    "meta": {
+        "app": "Phaser Editor - Scene Editor",
+        "url": "https://phaser.io/editor",
+        "contentType": "phasereditor2d.core.scene.SceneContentType",
+        "version": 5
+    }
+}

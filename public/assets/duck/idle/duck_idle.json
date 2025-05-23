@@ -1,0 +1,103 @@
+{
+	"textures": [
+		{
+			"image": "duck_idle",
+			"format": "RGBA8888",
+			"size": {
+				"w": 92,
+				"h": 20
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "duckee_idle2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 19,
+						"y": 28,
+						"w": 23,
+						"h": 20
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 23,
+						"h": 20
+					}
+				},
+				{
+					"filename": "duckee_idle1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 19,
+						"y": 29,
+						"w": 23,
+						"h": 19
+					},
+					"frame": {
+						"x": 23,
+						"y": 0,
+						"w": 23,
+						"h": 19
+					}
+				},
+				{
+					"filename": "duckee_idle3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 19,
+						"y": 29,
+						"w": 23,
+						"h": 19
+					},
+					"frame": {
+						"x": 46,
+						"y": 0,
+						"w": 23,
+						"h": 19
+					}
+				},
+				{
+					"filename": "duckee_idle4.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 19,
+						"y": 30,
+						"w": 23,
+						"h": 18
+					},
+					"frame": {
+						"x": 69,
+						"y": 0,
+						"w": 23,
+						"h": 18
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "http://free-tex-packer.com",
+		"version": "0.6.7"
+	}
+}
