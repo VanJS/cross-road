@@ -35,11 +35,6 @@
                 "key": "duckee_sprite_sheet"
             },
             {
-                "url": "assets/skies/Fading_Sky-Blue_04-512x512.png",
-                "type": "image",
-                "key": "Fading_Sky-Blue_04-512x512"
-            },
-            {
                 "url": [
                     "assets/audio/bgm/main-theme.mp3"
                 ],
